@@ -33,8 +33,8 @@ class Actor(nn.Module):
 
     def compute_power(self, a):
         # Normalize the power
-        G_real = a[:, :self.M ** 2].cpu().data.numpy()
-        G_imag = a[:, self.M ** 2:2 * self.M ** 2].cpu().data.numpy()
+        G_real = a[:, :self.M * self.K].cpu().data.numpy()
+        G_imag = a[:, self.M * self.K :2 * self.M * self.K ].cpu().data.numpy()
 
         G = G_real.reshape(G_real.shape[0], self.M, self.K) + 1j * G_imag.reshape(G_imag.shape[0], self.M, self.K)
 

@@ -16,7 +16,6 @@ class RIS_MISO(object):
 
         self.channel_est_error = channel_est_error
 
-        assert self.M == self.K
 
         self.awgn_var = AWGN_var
         self.channel_noise_var = channel_noise_var
@@ -30,7 +29,13 @@ class RIS_MISO(object):
 
         self.H_1 = None
         self.H_2 = None
-        self.G = np.eye(self.M, dtype=complex)
+
+        self.G = np.random.randn(self.M,self.K) + 1j * np.random.randn(self.M,self.K)
+        trace_GGH = np.trace(self.G @ (self.G.conj().T))
+        scaling_factor = np.sqrt(self.K / trace_GGH)
+        self.G *= scaling_factor
+
+
         self.Phi = np.eye(self.L, dtype=complex)
 
         self.state = None
@@ -101,8 +106,8 @@ class RIS_MISO(object):
 
         action = action.reshape(1, -1)
 
-        G_real = action[:, :self.M ** 2]
-        G_imag = action[:, self.M ** 2:2 * self.M ** 2]
+        G_real = action[:, :self.M * self.K]
+        G_imag = action[:, self.M * self.K :2 * self.M * self.K]
 
         Phi_real = action[:, -2 * self.L:-self.L]
         Phi_imag = action[:, -self.L:]
